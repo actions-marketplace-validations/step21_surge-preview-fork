@@ -62,17 +62,17 @@ async function main() {
     }
   }
   if (!prNumber) {
-    core.info(`😢 No related PR found, skip it.`);
+    core.info(`No related PR found, skip it.`);
     return;
   }
   core.info(`Found PR number: ${prNumber}, PR status: ${prState}`);
 
   const commentIfNotForkedRepo = (message: string) => {
     // if it is forked repo, don't comment
-    if (fromForkedRepo) {
+    /* if (fromForkedRepo) {
       core.info('PR created from a forked repository, so skip PR comment');
       return;
-    }
+    } */
     comment({
       repo: github.context.repo,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -87,7 +87,7 @@ async function main() {
     core.info('error message:');
     core.info(JSON.stringify(err, null, 2));
     commentIfNotForkedRepo(`
-😭 Deploy PR Preview ${gitCommitSha} failed. [Build logs](https://github.com/${
+Deploy PR Preview ${gitCommitSha} failed. [Build logs](https://github.com/${
       github.context.repo.owner
     }/${github.context.repo.repo}/actions/runs/${github.context.runId})
 
@@ -127,7 +127,7 @@ ${getCommentFooter()}
 
   core.debug(JSON.stringify(data?.check_runs, null, 2));
 
-  // 尝试获取 check_run_id，逻辑不是很严谨
+  // check_run_id
   let checkRunId;
   if (data?.check_runs?.length >= 0) {
     const checkRun = data?.check_runs?.find((item) => item.name === job);
@@ -201,9 +201,9 @@ ${getCommentFooter()}
     });
 
     commentIfNotForkedRepo(`
-🎊 PR Preview ${gitCommitSha} has been successfully built and deployed to https://${url}
+PR Preview ${gitCommitSha} has been successfully built and deployed to https://${url}
 
-🕐 Build time: **${duration}s**
+Build time: **${duration}s**
 
 ${formatImage({
   buildingLogUrl,
